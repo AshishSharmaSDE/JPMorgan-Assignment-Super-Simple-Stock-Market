@@ -8,7 +8,7 @@ def get_user_input():
                            "\n3. Record Trade" +
                            "\n4. Calculate Volume Weighted Stock Price "
                            "\n5. Calculate the GBCE All Share Index"
-                           "\n6. To Calculate Again\n>"))
+                           "\n>"))
     return user_input
 
 
@@ -21,17 +21,25 @@ def redirect_per_option():
     elif user_input == "3":
         util.record_trade()
     elif user_input == "4":
-        pass
+        util.stock_price()
     elif user_input == "5":
-        pass
-    elif user_input == "6":
-        redirect_per_option()
+        util.calculate_share_index()
     else:
-        print("Wrong input")
+        print("Wrong input. Try Again")
+    
+    retry = input("\nWould you like to try again.(Y/N)\n>")
+    if retry == "Y":
+        redirect_per_option()
+    elif retry == "N":
+        pass
+    else:
+        print("Wrong Input. Please type Y/N.")
 
 
 def main():
     redirect_per_option()
 
 
-main()
+if __name__ == '__main__':
+    main()
+    
