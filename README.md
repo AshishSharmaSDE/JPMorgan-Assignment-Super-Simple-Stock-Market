@@ -30,9 +30,9 @@ Requirements**
 | GIN | Preferred | 8 |  2% |  100 |
 | JOE | Common | 13 |   |  250 |
 
->**How to Run the program: **
+>**How to Run the program**
 Go into main directory and run python main.py
 
->**How to run testcases: **
+>**How to run testcases**
 Go into main directory and run python -m unittest discover test
  
