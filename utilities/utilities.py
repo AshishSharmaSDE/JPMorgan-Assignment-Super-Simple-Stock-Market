@@ -1,4 +1,4 @@
-from services.stock_services import Stock
+from services.stock_services import Stock, calculations
 from .validater import validate_inputs as vi
 
 def user_stock_symbol():
@@ -13,7 +13,7 @@ def user_stock_symbol():
 
 
 def user_price_input():
-    stock_price = input("\nEnter price \n>")
+    stock_price = int(input("\nEnter price \n>"))
     return stock_price
 
 
@@ -23,7 +23,7 @@ def calculate_divident():
 
     if validater:
         stock_price = user_price_input()
-        status, result = Stock().calc_divident(stock_symbol, stock_price)
+        status, result = calculations().calc_divident(stock_symbol, stock_price)
         if status:
             print("Dividend Yield :", result)
         else:
@@ -38,7 +38,7 @@ def calculate_pe_ratio():
     
     if validater:
         stock_price = user_price_input()
-        status, result = Stock().calc_pe_ratio(stock_symbol, stock_price)
+        status, result = calculations().calc_pe_ratio(stock_symbol, stock_price)
         
         if status:
                 print("P/E Ratio :", result)

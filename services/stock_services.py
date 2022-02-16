@@ -1,7 +1,7 @@
 import csv
 import pickle
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 gbce_csv_reader = list(csv.DictReader(open('./data/gbce.csv')))
 
@@ -36,54 +36,13 @@ class TradeRecord():
 
 
 class Stock():
-    def calc_divident(self, symbol, price):
-        stock_symbol = stock_symbol_mapping.get(int(symbol), None)
-        if stock_symbol is None:
-            return False, "Enter Valid Stock Symbol"
-
-        try:
-            if float(price) == 0.0:
-                return False, "Enter valid price"
-        except:
-            return False, "Enter valid price"
-
-        for gbce_stock in gbce_csv_reader:
-            if gbce_stock['stock_symbol'] == str(stock_symbol):
-                if gbce_stock['stock_type'] == "Common":
-                    try:
-                        divident = float(gbce_stock.get(
-                            'last_divident', 0)) / float(price)
-                    except ZeroDivisionError:
-                        divident = 0
-                else:
-                    try:
-                        divident = (float(gbce_stock.get('fixed_divident', 0))/100) * \
-                            float(gbce_stock.get('par_value', 0)) / \
-                            float(price)
-                    except ZeroDivisionError:
-                        divident = 0
-
-                return True, divident
-
-    def calc_pe_ratio(self, symbol, price):
-        status, result = self.calc_divident(symbol, price)
-
-        if not status:
-            return status, result
-        else:
-            try:
-                pe_ratio = float(price) / float(result)
-            except ZeroDivisionError:
-                pe_ratio = 0
-
-            return True, pe_ratio
 
     def record_trade(self, symbol, quantity, indicator, traded_price):
         if not os.path.exists("./data/trade_record_file"):
             with open('./data/trade_record_file', 'w') as fp:
                 pass
 
-        trade_record_file = open("./data/trade_record_file", "r")
+        trade_record_file = open("./data/trade_record_file", "rb")
 
         is_file_empty = os.path.getsize("./data/trade_record_file") == 0
         
@@ -132,7 +91,7 @@ class Stock():
             with open('./data/trade_record_file', 'w') as fp:
                 pass
 
-        trade_record_file = open("./data/trade_record_file", "r")
+        trade_record_file = open("./data/trade_record_file", "rb")
 
         is_file_empty = os.path.getsize("./data/trade_record_file") == 0
 
@@ -144,6 +103,7 @@ class Stock():
 
             for trade_record in list_trade_records:
                 if trade_record.symbol == stock_symbol and trade_record.created_time >= trade_time:
+                    print("----------------------------------------------------")
                     print("Trade_record ", trade_record.trade_details())
                     quantity_sum += trade_record.quantity
                     sum_trade_price += (trade_record.quantity *
@@ -167,7 +127,7 @@ class Stock():
             with open('trade_record_file', 'w') as fp:
                 pass
 
-        trade_record_file = open("./data/trade_record_file", "r")
+        trade_record_file = open("./data/trade_record_file", "rb")
 
         is_file_empty = os.path.getsize("./data/trade_record_file") == 0
 
@@ -179,6 +139,7 @@ class Stock():
 
             for trade_record in list_trade_records:
                 if trade_record.created_time >= trade_time:
+                    print("----------------------------------------------------")
                     print("trade_record ", trade_record.trade_details())
                     quantity_sum += trade_record.quantity
                     sum_trade_price += (trade_record.quantity *
@@ -193,3 +154,47 @@ class Stock():
 
         else:
             print("Trade Record is empty")
+
+
+class calculations():
+    def calc_divident(self, symbol, price):
+        stock_symbol = stock_symbol_mapping.get(int(symbol), None)
+        if stock_symbol is None:
+            return False, "Enter Valid Stock Symbol"
+
+        try:
+            if float(price) == 0.0:
+                return False, "Enter valid price"
+        except:
+            return False, "Enter valid price"
+
+        for gbce_stock in gbce_csv_reader:
+            if gbce_stock['stock_symbol'] == str(stock_symbol):
+                if gbce_stock['stock_type'] == "Common":
+                    try:
+                        divident = float(gbce_stock.get(
+                            'last_divident', 0)) / float(price)
+                    except ZeroDivisionError:
+                        divident = 0
+                else:
+                    try:
+                        divident = (float(gbce_stock.get('fixed_divident', 0))/100) * \
+                            float(gbce_stock.get('par_value', 0)) / \
+                            float(price)
+                    except ZeroDivisionError:
+                        divident = 0
+
+                return True, divident
+
+    def calc_pe_ratio(self, symbol, price):
+        status, result = self.calc_divident(symbol, price)
+
+        if not status:
+            return status, result
+        else:
+            try:
+                pe_ratio = float(price) / float(result)
+            except ZeroDivisionError:
+                pe_ratio = 0
+
+            return True, pe_ratio
